@@ -1,16 +1,21 @@
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from '@remix-run/react'
-import { ThemeProvider } from 'styled-components'
+import { ConfigProvider as AntdConfigProvider } from 'antd'
 import './tailwind.css'
+
+function isBrowser() {
+  return typeof window !== 'undefined' && window.document && window.document.createElement
+}
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>
         <meta charSet="utf-8" />
+        <meta name="renderer" content="webkit" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        {typeof document === 'undefined' ? '__ANTD__' : ''}
         <Meta />
         <Links />
+        {!isBrowser() && '__ANTD_STYLE__'}
       </head>
       <body>
         {children}
@@ -24,9 +29,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
 export default function App() {
   return (
     <div id="__remix">
-      <ThemeProvider theme={{}}>
+      <AntdConfigProvider>
         <Outlet />
-      </ThemeProvider>
+      </AntdConfigProvider>
     </div>
   )
 }
