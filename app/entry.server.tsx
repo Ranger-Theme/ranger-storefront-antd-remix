@@ -4,6 +4,7 @@ import { RemixServer } from '@remix-run/react'
 import { renderToPipeableStream } from 'react-dom/server'
 import { isbot } from 'isbot'
 import { StyleProvider, createCache, extractStyle } from '@ant-design/cssinjs'
+import { ServerStyleSheet } from 'styled-components'
 import type { EntryContext } from '@remix-run/node'
 
 const ABORT_DELAY = 5_000
@@ -19,23 +20,29 @@ export default function handleRequest(
   return new Promise((resolve, reject) => {
     let shellRendered = false
     let isStyleExtracted = false
+
     const cache = createCache()
+    const sheet = new ServerStyleSheet()
 
     const { pipe, abort } = renderToPipeableStream(
-      <StyleProvider cache={cache}>
-        <RemixServer context={remixContext} url={request.url} abortDelay={ABORT_DELAY} />
-      </StyleProvider>,
+      sheet.collectStyles(
+        <StyleProvider cache={cache}>
+          <RemixServer context={remixContext} url={request.url} abortDelay={ABORT_DELAY} />
+        </StyleProvider>
+      ),
       {
         [callbackName]: () => {
           shellRendered = true
           const body = new PassThrough({
             transform(chunk, _, callback) {
+              const str: string = chunk.toString()
               const styleText = extractStyle(cache)
+              const styles = sheet.getStyleTags()
 
               if (!isStyleExtracted) {
-                const str: string = chunk.toString()
                 if (str.includes('__ANTD_STYLE__')) {
-                  chunk = str.replace('__ANTD_STYLE__', styleText)
+                  const antdStyle = str.replace('__ANTD_STYLE__', styleText)
+                  chunk = antdStyle.replace('__CSS_IN_JSS__', styles)
                   isStyleExtracted = true
                 }
               }

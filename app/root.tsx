@@ -1,9 +1,14 @@
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from '@remix-run/react'
 import { ConfigProvider as AntdConfigProvider } from 'antd'
-import './tailwind.css'
+import type { LinksFunction } from '@remix-run/node'
+import RootCSS from './tailwind.css?url'
 
-function isBrowser() {
+const isBrowser = () => {
   return typeof window !== 'undefined' && window.document && window.document.createElement
+}
+
+export const links: LinksFunction = () => {
+  return [{ rel: 'stylesheet', href: RootCSS }]
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -16,6 +21,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
         {!isBrowser() && '__ANTD_STYLE__'}
+        {!isBrowser() && '__CSS_IN_JSS__'}
       </head>
       <body>
         {children}
