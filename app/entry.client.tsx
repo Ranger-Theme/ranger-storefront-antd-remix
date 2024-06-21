@@ -2,6 +2,7 @@ import { RemixBrowser } from '@remix-run/react'
 import { startTransition, StrictMode } from 'react'
 import { hydrateRoot } from 'react-dom/client'
 import { StyleProvider, legacyLogicalPropertiesTransformer } from '@ant-design/cssinjs'
+import { ConfigProvider as AntdConfigProvider } from 'antd'
 import { StyleSheetManager, ThemeProvider } from 'styled-components'
 
 const hydrate = async () => {
@@ -12,7 +13,9 @@ const hydrate = async () => {
         <StyleSheetManager>
           <ThemeProvider theme={{}}>
             <StyleProvider transformers={[legacyLogicalPropertiesTransformer]}>
-              <RemixBrowser />
+              <AntdConfigProvider>
+                <RemixBrowser />
+              </AntdConfigProvider>
             </StyleProvider>
           </ThemeProvider>
         </StyleSheetManager>

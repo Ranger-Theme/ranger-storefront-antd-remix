@@ -1,7 +1,9 @@
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from '@remix-run/react'
-import { ConfigProvider as AntdConfigProvider } from 'antd'
+
 import type { LinksFunction } from '@remix-run/node'
 import RootCSS from './tailwind.css?url'
+
+import AppShell from '@/components/AppShell'
 
 const isBrowser = () => {
   return typeof window !== 'undefined' && window.document && window.document.createElement
@@ -35,9 +37,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
 export default function App() {
   return (
     <div id="__remix">
-      <AntdConfigProvider>
+      <AppShell>
         <Outlet />
-      </AntdConfigProvider>
+      </AppShell>
     </div>
   )
 }
